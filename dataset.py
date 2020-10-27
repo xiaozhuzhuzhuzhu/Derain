@@ -5,11 +5,15 @@ import os
 
 
 class Dataset:
-    def __init__(self, rootdir, transform=None):
-        self.x_path = os.path.join(rootdir, "rainy")
-        self.y_path = os.path.join(rootdir, "groundtruth")
+    def __init__(self, rootdir, transform=None, xdir='rainy', ydir='groundtruth', y2x=None):
+        self.x_path = os.path.join(rootdir, xdir)
+        self.y_path = os.path.join(rootdir, ydir)
+        if y2x is None:
+            self.y2x = lambda x: x
+        else:
+            self.y2x = y2x
         if transform is None:
-            self.t = lambda x:x
+            self.t = lambda x: x
         else:
             self.t = transform
         self.images = []
@@ -19,10 +23,10 @@ class Dataset:
         self._to_tensor()
 
     def _read(self):
-        for file in os.listdir(self.x_path):
-            x_file = os.path.join(self.x_path, file)
+        for file in os.listdir(self.y_path):
+            x_file = os.path.join(self.x_path, self.y2x(file))
             y_file = os.path.join(self.y_path, file)
-            if not os.path.exists(y_file):
+            if not os.path.exists(x_file):
                 continue
             x_image = Image.open(x_file)
             y_image = Image.open(y_file)
@@ -43,5 +47,12 @@ class Dataset:
 
 
 if __name__ == '__main__':
-    dataset = Dataset("datasets/test/test12", Resize((128, 128)))
+    dataset = Dataset(
+        "datasets/test/Rain100H",
+        Resize((128, 128)),
+        xdir='rainy',
+        ydir='.',
+        y2x=lambda s: s.replace('norain', 'rain'),
+    )
+    print(len(dataset))
     loader = DataLoader(dataset, batch_size=5)
