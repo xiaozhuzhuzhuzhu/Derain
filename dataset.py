@@ -17,7 +17,6 @@ class Dataset:
         else:
             self.t = transform
         self.images = []
-        self.tensors = []
         self._read()
         self._tranform()
         self._to_tensor()
@@ -37,13 +36,13 @@ class Dataset:
 
     def _to_tensor(self):
         f = ToTensor()
-        self.tensors = [(f(x), f(y)) for x, y in self.images]
+        self.images = [(f(x), f(y)) for x, y in self.images]
 
     def __getitem__(self, i):
-        return self.tensors[i]
+        return self.images[i]
 
     def __len__(self):
-        return len(self.tensors)
+        return len(self.images)
 
 
 if __name__ == '__main__':
