@@ -29,12 +29,13 @@ if __name__ == '__main__':
             y = y.to(device)
 
             y_pred = model(x)
-            loss = torch.mean((y - y_pred) ** 2)
+            loss = -ssim(y, y_pred)
             loss.backward()
             with torch.no_grad():
-                p = psnr(loss)
-                s = ssim(y, y_pred)
-            print(loss.item(), p.item(), s.item())
+                mse = torch.mean((y - y_pred) ** 2)
+                p = psnr(mse)
+                s = -loss
+            print(loss.item(), p.item())
 
             optimizer.step()
             optimizer.zero_grad()
