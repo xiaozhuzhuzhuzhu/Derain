@@ -1,4 +1,5 @@
 import torch.nn as nn
+import torch
 
 
 class SELayer(nn.Module):
@@ -15,5 +16,12 @@ class SELayer(nn.Module):
     def forward(self, x):
         b, c, _, _ = x.size()
         y = self.avg_pool(x).view(b, c)
-        y = self.fc(x).view(b, c, 1, 1)
+        y = self.fc(y).view(b, c, 1, 1)
         return x * y.expand_as(x)
+
+if __name__ == '__main__':
+    batch_size, channels, height, width = 10, 32, 5, 5
+    x = torch.rand(batch_size, channels, height, width)
+    model = SELayer(channels)
+    y1 = model(x)
+    print(y1.shape)
