@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from resblock import ResBlock
+from resblock import ResBlockByWeight
 from convlstm import ConvLstm
 from se import SELayer
 
@@ -8,7 +8,7 @@ from se import SELayer
 class PReNet_r(nn.Module):
     def __init__(self, recurrent_iter, fi_in_channels=3,
                  n_intermediate_channels=32, kernel_size=3, stride_size=1,
-                 padding_size=1, fo_out_channels=3, n_resblocks=5, reduction=16):
+                 padding_size=1, fo_out_channels=3, res_dilations=(1, 1, 1, 1, 1), reduction=16):
         super(PReNet_r, self).__init__()
         self.iteration = recurrent_iter
         self.fi_in_channels = fi_in_channels
@@ -17,7 +17,6 @@ class PReNet_r(nn.Module):
         self.stride_size = stride_size
         self.padding_size = padding_size
         self.fo_out_channels = fo_out_channels
-        self.n_resblocks = n_resblocks
 
         # initial fin
         self.fin = nn.Sequential(
@@ -26,7 +25,7 @@ class PReNet_r(nn.Module):
                 out_channels=n_intermediate_channels,
                 kernel_size=kernel_size,
                 stride=stride_size,
-                padding=padding_size
+                padding=padding_size,
             ),
             nn.ReLU(),
         )
@@ -35,12 +34,19 @@ class PReNet_r(nn.Module):
         self.lstm = ConvLstm(in_channels=n_intermediate_channels, kernel_size=kernel_size)
 
         # initial fres
-        self.res = ResBlock(
-            n_channels=n_intermediate_channels,
-            kernel_size=kernel_size,
-            stride_size=stride_size,
-            padding_size=padding_size,
-        )
+        self.resblocks = torch.nn.ModuleList([
+            ResBlockByWeight(stride_size=stride_size, dilation=d) for d in res_dilations
+        ])
+
+        w1 = torch.rand(n_intermediate_channels, n_intermediate_channels, kernel_size, kernel_size)
+        w2 = torch.rand(n_intermediate_channels, n_intermediate_channels, kernel_size, kernel_size)
+        b1 = torch.rand(n_intermediate_channels)
+        b2 = torch.rand(n_intermediate_channels)
+
+        self.res_w1 = torch.nn.Parameter(w1, requires_grad=True)
+        self.res_w2 = torch.nn.Parameter(w2, requires_grad=True)
+        self.res_b1 = torch.nn.Parameter(b1, requires_grad=True)
+        self.res_b2 = torch.nn.Parameter(b2, requires_grad=True)
 
         # initial se
         self.se = SELayer(channel=n_intermediate_channels,
@@ -73,8 +79,8 @@ class PReNet_r(nn.Module):
             x = h
 
             # se_resblock layer
-            for j in range(self.n_resblocks):
-                x = self.res(x)
+            for res in self.resblocks:  # type: ResBlockByWeight
+                x = res(x, self.res_w1, self.res_w2, self.res_b1, self.res_b2)
                 x = self.se(x)
 
             # fout layer
@@ -91,3 +97,6 @@ if __name__ == "__main__":
     model = PReNet_r(6)
     y = model(x)
     print(y.shape)
+
+    for name, param in model.named_parameters():
+        print(name, param.shape)

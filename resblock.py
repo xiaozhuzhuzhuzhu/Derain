@@ -15,3 +15,31 @@ class ResBlock(nn.Module):
     def forward(self, x):
         x = torch.relu(self.resblock(x) + x)
         return x
+
+
+class ResBlockByWeight(nn.Module):
+    def __init__(self, stride_size=1, dilation=1):
+        super(ResBlockByWeight, self).__init__()
+        self.stride = stride_size
+        self.dilation = dilation
+
+    def forward(self, x, w1, w2, b1, b2):
+        input = x
+
+        # kernel size
+        kH, kW = w1.shape[2:4]
+        # padding size
+        pH = kH // 2 + self.dilation - 1
+        pW = kW // 2 + self.dilation - 1
+        x = torch.nn.functional.conv2d(x, w1, bias=b1, stride=self.stride, padding=(pH, pW), dilation=self.dilation)
+        x = torch.relu(x)
+
+        # kernel size
+        kH, kW = w2.shape[2:4]
+        # padding size
+        pH = kH // 2 + self.dilation - 1
+        pW = kW // 2 + self.dilation - 1
+        x = torch.nn.functional.conv2d(x, w2, bias=b2, stride=self.stride, padding=(pH, pW), dilation=self.dilation)
+        x = torch.relu(x)
+
+        return torch.relu(x + input)
