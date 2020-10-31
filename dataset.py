@@ -30,15 +30,11 @@ class Dataset:
             self.x_images.append(Image.open(x_file))
             self.y_images.append(Image.open(y_file))
 
-            x_image = Image.open(x_file)
-            y_image = Image.open(y_file)
-            self.images.append((x_image, y_image))
-
     def __getitem__(self, i):
         return self.to_tensor(self.t(self.x_images[i])), self.to_tensor(self.t(self.y_images[i]))
 
     def __len__(self):
-        return len(self.images)
+        return len(self.x_images)
 
 
 if __name__ == '__main__':
