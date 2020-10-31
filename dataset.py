@@ -20,6 +20,8 @@ class Dataset:
         else:
             self.t = transform
         if y_check is None:
+            self.y_check = lambda _: True
+        else:
             self.y_check = y_check
         self.to_tensor = ToTensor()
         self.max_num = max_num
