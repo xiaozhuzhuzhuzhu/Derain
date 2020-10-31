@@ -5,7 +5,7 @@ import os
 
 
 class Dataset:
-    def __init__(self, rootdir, transform=None, xdir='rainy', ydir='groundtruth', y2x=None):
+    def __init__(self, rootdir, transform=None, xdir='rainy', ydir='groundtruth', y2x=None, max_num=None):
         self.x_path = os.path.join(rootdir, xdir)
         self.y_path = os.path.join(rootdir, ydir)
 
@@ -20,6 +20,8 @@ class Dataset:
         else:
             self.t = transform
         self.to_tensor = ToTensor()
+        self.max_num = max_num
+        self._read()
 
     def _read(self):
         for file in os.listdir(self.y_path):
@@ -29,6 +31,9 @@ class Dataset:
                 continue
             self.x_images.append(Image.open(x_file))
             self.y_images.append(Image.open(y_file))
+
+            if self.max_num and len(self.x_images) >= self.max_num:
+                break
 
     def __getitem__(self, i):
         return self.to_tensor(self.t(self.x_images[i])), self.to_tensor(self.t(self.y_images[i]))
