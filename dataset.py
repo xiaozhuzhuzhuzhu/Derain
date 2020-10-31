@@ -9,8 +9,8 @@ class Dataset:
         self.x_path = os.path.join(rootdir, xdir)
         self.y_path = os.path.join(rootdir, ydir)
 
-        self.x_images = []
-        self.y_images = []
+        self.x_image_paths = []
+        self.y_image_paths = []
         if y2x is None:
             self.y2x = lambda x: x
         else:
@@ -35,18 +35,18 @@ class Dataset:
             y_file = os.path.join(self.y_path, file)
             if not os.path.exists(x_file):
                 continue
-            self.x_images.append(Image.open(x_file))
-            self.y_images.append(Image.open(y_file))
+            self.x_image_paths.append(x_file)
+            self.y_image_paths.append(y_file)
 
-            if self.max_num and len(self.x_images) >= self.max_num:
+            if self.max_num and len(self.x_image_paths) >= self.max_num:
                 break
 
     def __getitem__(self, i):
-        return self.to_tensor(self.t(self.x_images[i])), self.to_tensor(self.t(self.y_images[i]))
+        return self.to_tensor(self.t(Image.open(self.x_image_paths[i]))), \
+               self.to_tensor(self.t(Image.open(self.y_image_paths[i])))
 
     def __len__(self):
-        return len(self.x_images)
-
+        return len(self.x_image_paths)
 
 if __name__ == '__main__':
     dataset = Dataset(
