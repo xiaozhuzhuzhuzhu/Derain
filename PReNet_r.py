@@ -73,8 +73,7 @@ class PReNet_r(nn.Module):
 
             # fout layer
             x = self.fout(x)
-
-        x = input + x
+            x = input + x
 
         return x
 
