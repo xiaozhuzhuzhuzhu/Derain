@@ -5,7 +5,7 @@ import os
 
 
 class Dataset:
-    def __init__(self, rootdir, transform=None, xdir='rainy', ydir='groundtruth', y2x=None, max_num=None):
+    def __init__(self, rootdir, transform=None, xdir='rainy', ydir='groundtruth', y_check=None, y2x=None, max_num=None):
         self.x_path = os.path.join(rootdir, xdir)
         self.y_path = os.path.join(rootdir, ydir)
 
@@ -19,12 +19,16 @@ class Dataset:
             self.t = lambda x: x
         else:
             self.t = transform
+        if y_check is None:
+            self.y_check = y_check
         self.to_tensor = ToTensor()
         self.max_num = max_num
         self._read()
 
     def _read(self):
         for file in os.listdir(self.y_path):
+            if not self.y_check(file):
+                continue
             x_file = os.path.join(self.x_path, self.y2x(file))
             y_file = os.path.join(self.y_path, file)
             if not os.path.exists(x_file):
