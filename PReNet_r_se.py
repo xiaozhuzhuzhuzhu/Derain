@@ -3,6 +3,14 @@ import torch.nn as nn
 from resblock import ResBlockByWeight
 from convlstm import ConvLstm
 from se import SELayer
+import numpy as np
+
+
+def _init_conv_w_b(w, b):
+    nn.init.kaiming_normal_(w, a=np.sqrt(5))
+    fan_in, _ = nn.init._calculate_fan_in_and_fan_out(w)
+    bound = 1 / np.sqrt(fan_in)
+    nn.init.uniform_(b, -bound, bound)
 
 
 class PReNet_r(nn.Module):
@@ -38,10 +46,13 @@ class PReNet_r(nn.Module):
             ResBlockByWeight(stride_size=stride_size, dilation=d) for d in res_dilations
         ])
 
-        w1 = torch.rand(n_intermediate_channels, n_intermediate_channels, kernel_size, kernel_size)
-        w2 = torch.rand(n_intermediate_channels, n_intermediate_channels, kernel_size, kernel_size)
-        b1 = torch.rand(n_intermediate_channels)
-        b2 = torch.rand(n_intermediate_channels)
+        w1 = torch.Tensor(n_intermediate_channels, n_intermediate_channels, kernel_size, kernel_size)
+        w2 = torch.Tensor(n_intermediate_channels, n_intermediate_channels, kernel_size, kernel_size)
+        b1 = torch.Tensor(n_intermediate_channels)
+        b2 = torch.Tensor(n_intermediate_channels)
+
+        _init_conv_w_b(w1, b1)
+        _init_conv_w_b(w2, b2)
 
         self.res_w1 = torch.nn.Parameter(w1, requires_grad=True)
         self.res_w2 = torch.nn.Parameter(w2, requires_grad=True)
@@ -96,7 +107,5 @@ if __name__ == "__main__":
     x = torch.rand(batch_size, channels, height, width)
     model = PReNet_r(6)
     y = model(x)
-    print(y.shape)
 
-    for name, param in model.named_parameters():
-        print(name, param.shape)
+    print(y.min().item(), y.max().item())
