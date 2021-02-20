@@ -1,3 +1,5 @@
+import torch
+
 def shuffle_chnls(x, groups=2):
     """Channel Shuffle"""
 
