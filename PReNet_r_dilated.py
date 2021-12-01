@@ -92,7 +92,7 @@ class PReNet_r(nn.Module):
             # fout layer
             x = self.fout(x)
             x = input + x
-            x = torch.relu(x)
+            # x = torch.relu(x)
 
         return x
 
