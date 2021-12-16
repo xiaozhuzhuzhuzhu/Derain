@@ -26,4 +26,5 @@ print(y.shape)
 model = FeatureLoss(loss=perceptual_loss, blocks=[0, 1, 2], weights=[0.2, 0.2, 0.3])
 
 loss = model(x, y)
+print(model(x, y))
 print(loss)
