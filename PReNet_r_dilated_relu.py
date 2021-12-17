@@ -58,14 +58,17 @@ class PReNet_r(nn.Module):
         self.res_b1 = torch.nn.Parameter(b1, requires_grad=True)
         self.res_b2 = torch.nn.Parameter(b2, requires_grad=True)
 
-
         # initial fout
-        self.fout = nn.Conv2d(
+        self.fout = nn.Sequential(
+            nn.Conv2d(
             in_channels=n_intermediate_channels,
             out_channels=fo_out_channels,
             kernel_size=kernel_size,
             stride=stride_size,
             padding=padding_size
+        ),
+            # add relu
+            nn.ReLU(),
         )
 
     def forward(self, input):
@@ -91,9 +94,6 @@ class PReNet_r(nn.Module):
 
             # fout layer
             x = self.fout(x)
-
-            # add relu
-            x = torch.relu(x)
 
             x = input + x
             # x = torch.relu(x)
