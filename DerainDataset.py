@@ -6,6 +6,7 @@ import h5py
 import torch
 import cv2
 import torch.utils.data as udata
+from torchvision.transforms import ToTensor
 
 
 def normalize(data):
@@ -195,6 +196,7 @@ class Dataset_train(udata.Dataset):
         input_h5f = h5py.File(input_path, 'r')
 
         self.keys = list(target_h5f.keys())
+        self.to_tensor = ToTensor()
         random.shuffle(self.keys)
         target_h5f.close()
         input_h5f.close()
@@ -217,4 +219,4 @@ class Dataset_train(udata.Dataset):
         target_h5f.close()
         input_h5f.close()
 
-        return torch.Tensor(self.t(input)), torch.Tensor(self.t(target))
+        return self.to_tensor(self.t(input)), self.to_tensor(self.t(target))
