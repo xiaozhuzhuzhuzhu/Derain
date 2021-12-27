@@ -48,6 +48,7 @@ class Dataset:
     def __len__(self):
         return len(self.x_image_paths)
 
+
 if __name__ == '__main__':
     dataset = Dataset(
         "datasets/test/Rain100H",

@@ -48,6 +48,7 @@ class ConvLstm(nn.Module):
         h = o * torch.tanh(c)
         return h, c
 
+
 if __name__ == '__main__':
     batch_size = 10
     channels = 32

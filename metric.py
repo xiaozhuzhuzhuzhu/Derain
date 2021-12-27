@@ -1,7 +1,9 @@
 import torch
 
+
 def psnr(mse):
     return -10 * torch.log10(mse)
+
 
 def ssim(x, y, L=1, k1=0.01, k2=0.03):
     mx, my = x.mean(), y.mean()
