@@ -6,7 +6,6 @@ import h5py
 import torch
 import cv2
 import torch.utils.data as udata
-from torchvision.transforms import ToTensor
 
 
 def normalize(data):
@@ -182,12 +181,11 @@ def prepare_data_RainTrainL(data_path, patch_size, stride):
     print('training set, # samples %d\n' % train_num)
 
 
-class Dataset_train(udata.Dataset):
-    def __init__(self, data_path='.', transform=None):
-        super(Dataset_train, self).__init__()
+class Dataset(udata.Dataset):
+    def __init__(self, data_path='.'):
+        super(Dataset, self).__init__()
 
         self.data_path = data_path
-        self.t = transform
 
         target_path = os.path.join(self.data_path, 'train_target.h5')
         input_path = os.path.join(self.data_path, 'train_input.h5')
@@ -196,7 +194,6 @@ class Dataset_train(udata.Dataset):
         input_h5f = h5py.File(input_path, 'r')
 
         self.keys = list(target_h5f.keys())
-        self.to_tensor = ToTensor()
         random.shuffle(self.keys)
         target_h5f.close()
         input_h5f.close()
@@ -219,4 +216,4 @@ class Dataset_train(udata.Dataset):
         target_h5f.close()
         input_h5f.close()
 
-        return self.to_tensor(self.t(input)), self.to_tensor(self.t(target))
+        return torch.Tensor(input), torch.Tensor(target)
