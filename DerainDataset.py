@@ -181,9 +181,9 @@ def prepare_data_RainTrainL(data_path, patch_size, stride):
     print('training set, # samples %d\n' % train_num)
 
 
-class Dataset(udata.Dataset):
+class Dataset_train(udata.Dataset):
     def __init__(self, data_path='.'):
-        super(Dataset, self).__init__()
+        super(Dataset_train, self).__init__()
 
         self.data_path = data_path
 
