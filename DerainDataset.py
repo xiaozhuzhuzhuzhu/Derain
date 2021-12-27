@@ -182,10 +182,11 @@ def prepare_data_RainTrainL(data_path, patch_size, stride):
 
 
 class Dataset_train(udata.Dataset):
-    def __init__(self, data_path='.'):
+    def __init__(self, data_path='.', transform=None):
         super(Dataset_train, self).__init__()
 
         self.data_path = data_path
+        self.t = transform
 
         target_path = os.path.join(self.data_path, 'train_target.h5')
         input_path = os.path.join(self.data_path, 'train_input.h5')
@@ -216,4 +217,4 @@ class Dataset_train(udata.Dataset):
         target_h5f.close()
         input_h5f.close()
 
-        return torch.Tensor(input), torch.Tensor(target)
+        return torch.Tensor(self.t(input)), torch.Tensor(self.t(target))
