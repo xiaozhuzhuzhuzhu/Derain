@@ -4,6 +4,18 @@ from torch.utils.data import DataLoader
 import os
 
 
+def y2x_None(x):
+    return x
+
+
+def t_None(x):
+    return x
+
+
+def y_check_None():
+    return True
+
+
 class Dataset:
     def __init__(self, rootdir, transform=None, xdir='rainy', ydir='groundtruth', y_check=None, y2x=None, max_num=None):
         self.x_path = os.path.join(rootdir, xdir)
@@ -11,18 +23,22 @@ class Dataset:
 
         self.x_image_paths = []
         self.y_image_paths = []
+
         if y2x is None:
-            self.y2x = lambda x: x
+            self.y2x = y2x_None
         else:
             self.y2x = y2x
+
         if transform is None:
-            self.t = lambda x: x
+            self.t = t_None
         else:
             self.t = transform
+
         if y_check is None:
-            self.y_check = lambda _: True
+            self.y_check = y_check_None
         else:
             self.y_check = y_check
+
         self.to_tensor = ToTensor()
         self.max_num = max_num
         self._read()
