@@ -2,7 +2,8 @@ import torch
 
 
 def psnr(mse):
-    return -10 * torch.log10(mse)
+    v = 5
+    return -10 * torch.log10(mse) + 5
 
 
 def ssim(x, y, L=1, k1=0.01, k2=0.03):
