@@ -12,11 +12,11 @@ image = transform(image)
 
 model = PRDense(fi_in_channels=3, n_intermediate_channels=48, num_layers_m=5,
                 fo_out_channels=3, growth_rate_k=12, recurrent_iter=6)
-print(model)
+# print(model)
 image = torch.reshape(image, (1, 3, 32, 32))
 model.eval()
 with torch.no_grad():
     output = model(image)
-print(output)
+# print(output)
 
-print(output.argmax(1))
+# print(output.argmax(1))
