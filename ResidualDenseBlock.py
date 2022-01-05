@@ -19,7 +19,11 @@ class ResidualDenseBlock(torch.nn.Module):
     def forward(self, x):
         # residual = self.down_sample_fn(x)
         residual = x
+        print(residual.shape)
         x = self.dense_block(x)
+        print(x.shape)
         x = self.transition_block(x)
+        print(x.shape)
         x += residual
+        print(x.shape)
         return x

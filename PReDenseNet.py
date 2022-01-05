@@ -1,6 +1,8 @@
 # 输入层+残差密连块+输出层
+import torch
 import torch.nn as nn
 from ResidualDenseBlock import *
+from convlstm import ConvLstm
 
 
 class PRDense(nn.Module):
@@ -30,6 +32,9 @@ class PRDense(nn.Module):
         self.red = ResidualDenseBlock(in_channels=n_intermediate_channels,
                                       num_layers_m=num_layers_m, growth_rate_k=growth_rate_k)
 
+        # initial frecurrent
+        self.lstm = ConvLstm(in_channels=n_intermediate_channels, kernel_size=3)
+
         # initial fout
         self.fout = nn.Conv2d(
             in_channels=n_intermediate_channels,
@@ -41,6 +46,10 @@ class PRDense(nn.Module):
 
     def forward(self, input):
         x = input
+        batch_size, row, col = input.size(0), input.size(2), input.size(3)
+        h = torch.zeros((batch_size, self.n_intermediate_channels, row, col))
+        c = torch.zeros((batch_size, self.n_intermediate_channels, row, col))
+
         for i in range(self.iteration):
             # 输入：两张图级联
             x = torch.cat((input, x), dim=1)
@@ -51,6 +60,11 @@ class PRDense(nn.Module):
             # fred layer
             for j in range(self.n_red):
                 x = self.red(x)
+
+            # frecurrent layer
+            x = torch.cat([x, h], 1)
+            h, c = self.lstm(x, c)
+            x = h
 
             # fout layer
             x = self.fout(x)
