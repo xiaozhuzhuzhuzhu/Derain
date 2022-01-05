@@ -1,4 +1,4 @@
-# 输入层+残差密连块+输出层
+# 输入层+残差密连块+LSTM+输出层
 import torch
 import torch.nn as nn
 from ResidualDenseBlock import *
