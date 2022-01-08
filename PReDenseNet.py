@@ -1,5 +1,4 @@
-# 输入层+LSTM+残差密连块+输出层
-import torch
+# 输入层+残差密连块+LSTM+输出层
 import torch.nn as nn
 from ResidualDenseBlock import *
 from convlstm import ConvLstm
@@ -57,14 +56,14 @@ class PRDenseNet(nn.Module):
             # fin layer
             x = self.fin(x)
 
+            # fred layer
+            for j in range(self.n_red):
+                x = self.red(x)
+
             # frecurrent layer
             x = torch.cat([x, h], 1)
             h, c = self.lstm(x, c)
             x = h
-
-            # fred layer
-            for j in range(self.n_red):
-                x = self.red(x)
 
             # fout layer
             x = self.fout(x)
