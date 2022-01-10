@@ -6,8 +6,8 @@ from gru import ConvGru
 
 
 class PRDenseNet(nn.Module):
-    def __init__(self, fi_in_channels=3, n_intermediate_channels=48, num_layers_m=5,
-                 fo_out_channels=3, growth_rate_k=12, recurrent_iter=6, n_red=4):
+    def __init__(self, fi_in_channels=3, n_intermediate_channels=48, num_layers_m=6,
+                 fo_out_channels=3, growth_rate_k=12, recurrent_iter=6, n_red=3):
         super(PRDenseNet, self).__init__()
         self.fi_in_channels = fi_in_channels
         self.n_intermediate_channels = n_intermediate_channels
