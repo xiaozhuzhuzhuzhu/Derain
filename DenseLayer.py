@@ -14,15 +14,11 @@ class DenseLayer(torch.nn.Module):
 
     def forward(self, x):
         # x = F.relu(self.bn_1(x))
-        # x = F.relu(x)
-        # x = self.conv_1_1(x)
+        x = F.relu(x)
         x = self.conv_1_1(x)
-        x = F.relu(x)
         # x = F.relu(self.bn_2(x))
-        # x = F.relu(x)
-        # x = self.conv_3_3(x)
-        x = self.conv_3_3(x)
         x = F.relu(x)
+        x = self.conv_3_3(x)
         return x
 
 

@@ -13,10 +13,8 @@ class TransitionBlock(torch.nn.Module):
 
     def forward(self, x):
         # x = F.relu(self.bn_1(x))
-        # x = F.relu(x)
-        # x = self.conv_1_1(x)
-        x = self.conv_1_1(x)
         x = F.relu(x)
+        x = self.conv_1_1(x)
         # x = self.avg_pooling(x)
         return x
     
