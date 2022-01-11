@@ -22,3 +22,24 @@ class DenseLayer(torch.nn.Module):
         return x
 
 
+class DenseLayer_dilated(torch.nn.Module):
+
+    def __init__(self, in_channels, out_channels, dilation=1, padding=1):
+        super(DenseLayer_dilated, self).__init__()
+        # self.bn_1 = torch.nn.BatchNorm2d(num_features=in_channels)
+        self.conv_1_1 = torch.nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=1, bias=False)
+        # self.bn_2 = torch.nn.BatchNorm2d(num_features=out_channels)
+        self.dilation = dilation
+        self.padding = padding
+        self.conv_3_3 = torch.nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=3,
+                                        padding=self.padding, dilation=self.dilation, bias=False)
+
+    def forward(self, x):
+        # x = F.relu(self.bn_1(x))
+        x = F.relu(x)
+        x = self.conv_1_1(x)
+        # x = F.relu(self.bn_2(x))
+        x = F.relu(x)
+        x = self.conv_3_3(x)
+        return x
+
