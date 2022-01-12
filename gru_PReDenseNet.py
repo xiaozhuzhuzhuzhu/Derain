@@ -63,6 +63,7 @@ class PRDenseNet(nn.Module):
             # fred layer
             for j in range(self.n_red):
                 x = self.red(x)
+                x = F.relu(x)
 
             # fout layer
             x = self.fout(x)
