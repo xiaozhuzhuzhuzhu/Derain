@@ -6,7 +6,7 @@ def psnr(mse):
 
 
 def psnr_new(mse):
-    p = 10 * torch.log10((2 ** 8 - 1) / mse)
+    p = 10 * torch.log10(255 * 255 / mse)
     return p
 
 
