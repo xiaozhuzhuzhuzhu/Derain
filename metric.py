@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 
 
 def psnr(mse):
@@ -6,7 +7,7 @@ def psnr(mse):
 
 
 def psnr_new(mse):
-    p = 10 * torch.log10((2 ** 24 - 1) / mse)
+    p = 10 * np.log10((2 ** 8 - 1) / mse)
     return p
 
 
@@ -17,7 +18,6 @@ def ssim(x, y, L=1, k1=0.01, k2=0.03):
     vxy = torch.sum((x - mx) * (y - my)) / (torch.numel(x) - 1)
     c1, c2 = (k1 * L) ** 2, (k2 * L) ** 2
     ss = (2 * mx * my + c1) * (2 * vxy + c2) /(mx ** 2 + my ** 2 + c1) / (vx + vy +c2)
-    ss -= 0.02
     return ss
 
 
@@ -27,5 +27,10 @@ def ssim_new(x, y, L=255, k1=0.01, k2=0.03):
     vx, vy = sx ** 2, sy ** 2
     vxy = torch.sum((x - mx) * (y - my)) / (torch.numel(x) - 1)
     c1, c2 = (k1 * L) ** 2, (k2 * L) ** 2
-    ss = (2 * mx * my + c1) * (2 * vxy + c2) / (mx ** 2 + my ** 2 + c1) / (vx + vy + c2)
+    c3 = c2 / 2
+    # ss = (2 * mx * my + c1) * (2 * vxy + c2) / (mx ** 2 + my ** 2 + c1) / (vx + vy + c2)
+    l12 = (2 * mx * my + c1) / (mx ** 2 + my ** 2 + c1)
+    c12 = (2 * sx * sy + c2) / (vx + vy + c2)
+    s12 = (vxy + c3) / (sx * sy + c3)
+    ss = l12 * c12 * s12
     return ss
