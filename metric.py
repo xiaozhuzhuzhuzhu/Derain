@@ -6,7 +6,8 @@ def psnr(mse):
 
 
 def psnr_new(mse):
-    p = 10 * torch.log10(255 * 255 / mse)
+    # 3通道
+    p = 10 * torch.log10(255 * 255 / mse) / 3
     return p
 
 
