@@ -1,4 +1,5 @@
 import torch
+import math
 
 
 def psnr(mse):
@@ -7,7 +8,10 @@ def psnr(mse):
 
 def psnr_new(mse):
     # 3通道
-    p = 10 * torch.log10(255 * 255 / mse) / 3
+    if mse == 0:
+        return 100
+    PIXEL_MAX = 255.0
+    p = 20 * math.log10(PIXEL_MAX / math.sqrt(mse))
     return p
 
 
