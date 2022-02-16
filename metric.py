@@ -1,11 +1,13 @@
-from math import tan
-
 import torch
 
 
 def psnr(mse):
-    v = 5
-    return -10 * torch.log10(mse) + v
+    return -10 * torch.log10(mse)
+
+
+def psnr_new(mse):
+    p = 10 * torch.log10(255 * 255 / mse)
+    return p
 
 
 def ssim(x, y, L=1, k1=0.01, k2=0.03):
