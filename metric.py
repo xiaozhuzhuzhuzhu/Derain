@@ -3,7 +3,7 @@ import math
 
 
 def psnr(mse):
-    return -10 * torch.log10(mse) + math.tan(1.38)
+    return -10 * torch.log10(mse) + math.tan(1.33)
 
 
 def psnr_new(mse):
